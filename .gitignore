@@ -1,0 +1,7 @@
+﻿# Python bytecode/cache
+__pycache__/
+*.py[cod]
+
+# Environment folders
+.venv/
+venv/
