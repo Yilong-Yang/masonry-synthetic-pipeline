@@ -1,0 +1,144 @@
+model new
+model configure plugins 
+model large-strain off
+block mech damp local 0.8
+
+program call 'params.dat'
+
+program call '5X3YAshlar.dat' 
+;;model save 'prep_state'
+;;model restore 'prep_state' 
+;
+
+ret
+;;first boundary condition
+block fix range group 'BOT'
+;
+block face triangulate edge-max 20
+model save 'prep_state1'
+;model restore 'prep_state1'
+
+ret
+
+;CONTACT PROPERTIES
+fish def apply_properties
+    command
+    block contact generate-subcontacts
+    block contact jmodel assign TSC_Linear_TSC_Coupled 
+    endcommand
+    ; bonding
+    command
+        block contact property stiffness-normal-initial [K_n_b] stiffness-normal [K_n_b] stiffness-shear [K_s_b] ...
+                ten [t_strength_b] cohesion [cohesion_b] fric [friction_angle_b] ...
+                fric-residual [friction_angle_b] cohesion-residual [cohesion_res_b]  ...
+                Gf_I [G_t_b] Gf_II [G_s_b] Gc [G_c_b] fc [c_strength_b]
+    endcommand
+        
+    ; Mortar properties
+    command
+        block contact property stiffness-normal-initial [K_n] stiffness-normal [K_n] stiffness-shear [K_s] ...
+                ten [t_strength] cohesion [cohesion] fric [friction_angle] ...
+                fric-residual [friction_angle] cohesion-residual [cohesion_res]  ...
+                Gf_I [G_t] Gf_II [G_s] Gc [G_c] fc [c_strength] range group 'mortar'
+    endcommand
+        
+        
+;    loop foreach  group_name group_list
+;        command
+;            block contact property stiffness-normal-initial [K_n] stiffness-normal [K_n] stiffness-shear [K_s] ...
+;                    ten [t_strength] cohesion [cohesion] fric [friction_angle] ...
+;                    fric-residual [friction_angle] cohesion-residual [cohesion_res]  ...
+;                    Gf_I [G_t] Gf_II [G_s] Gc [G_c] fc [c_strength] range group-intersection 'brick1' [group_name]
+;        endcommand
+;    endloop
+end
+[apply_properties]
+
+block property density [density]
+model save 'prep_state2'
+;model restore 'prep_state2'
+
+block contact group-subcontact 'Bot_boundary' range pos-z [bot_contact_z-z_threshold] [bot_contact_z+z_threshold]
+block face group 'TOPFACE' range pos-z [top_z-z_threshold] [top_z+z_threshold]
+
+fish def Reaction_normal
+    top_normal = 0
+    loop foreach bscp block.subcontact.list
+        if block.subcontact.group(bscp) = 'Bot_boundary'
+            top_normal = top_normal + block.subcontact.force.norm(bscp)
+        endif
+    end_loop
+    Reaction_normal = top_normal
+end
+fish history Reaction_normal
+
+fish def Reaction_shear
+    top_shear = 0
+    loop foreach bscp block.subcontact.list
+        if block.subcontact.group(bscp) = 'Bot_boundary'
+            top_shear = top_shear + block.subcontact.force.shear.x(bscp)
+        endif
+    end_loop
+    Reaction_shear = top_shear
+end
+fish history Reaction_shear
+
+block history displacement-x position [top_center]
+[Reaction_normal]
+[Reaction_shear]
+
+;model save 'prep_state'
+block face apply stress-zz [v_pressure] range group 'TOPFACE'  ; 
+model solve
+model save 'prep_state2'
+;model restore 'prep_state2'
+
+block apply velocity-x 0 range group 'TOP'
+block apply velocity-y 0 range group 'TOP'
+block apply velocity-z 0 range group 'TOP'
+block initialize rvelocity-x 0 range group 'TOP'
+block initialize rvelocity-y 0 range group 'TOP'
+block initialize rvelocity-z 0 range group 'TOP'
+block fix range group 'TOP'
+
+fish def test_func
+    top_gp = block.gp.near(top_center)
+    top_dis = block.gp.disp.x(top_gp)
+    drift = 0.05
+    x_threshold = top_center(1)*2*drift
+    command
+        block apply velocity-x [velocity] range group [loading_group]
+    endcommand
+    loop while top_dis < x_threshold ; 5% drift pushover test
+        command
+            model cycle [cycle_n]
+        endcommand
+        top_dis = block.gp.disp.x(top_gp)
+    endloop
+end
+[test_func]
+
+model save 'post_test1'
+;model restore 'post_test1'
+
+fish def dump 
+    Gp_information = list
+    Column_names = list
+    Column_names('end') = 'Block_ID Block_group Grid_point_ID Pos_x Pos_y Pos_z Disp_x Disp_y Disp_z'
+    loop foreach bgpp block.gp.list         
+        blp = block.gp.hostblock(bgpp)
+        block_i = block.id(blp)
+        gp_i = block.gp.id(bgpp)
+        pos = block.gp.pos(bgpp)
+        disp = block.gp.disp(bgpp)
+        bk_group = block.group(blp)
+        Gp_information('end') = string(block_i) + ' ' + string(bk_group) + ' ' + string(gp_i) + ' ' ...
+                + string(pos->x)+' '+string(pos->y)+' '+string(pos->z) + ' ' ...
+                + string(disp->x)+' '+string(disp->y)+' '+string(disp->z)
+    end_loop                               
+    file.open('Gp_info','write','text')
+    file.write(Column_names)
+    file.write(Gp_information)            
+    file.close       
+end 
+[dump]

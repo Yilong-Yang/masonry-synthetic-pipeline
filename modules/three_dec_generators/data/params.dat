@@ -1,0 +1,50 @@
+fish def params
+    ; All units are compatible with millimeters
+    global mesh_size = 0.05e3 ; mm
+    global gravity_const = 9.81e3 ; mm/s^2
+
+    global density = 1805e-9 ; kg/mm^3
+    ; parameters of the bonding
+    global E = 2.746e9*3 * 1e-3  ; elasticity in kg mm^-1 s^-2, or kPa
+    global G = E/3 ; shear elasticity
+    global joint_spacing = 70.5e-3 * 1e3 ; mm
+    global K_n = E/joint_spacing
+    global K_s = G/joint_spacing
+    global t_strength = 0.33e6*0.05 * 1e-3 ; tensile strength in kg mm^-1 s^-2
+    global c_strength = 5.93e6 * 1e-3 ; kg mm^-1 s^-2
+    global friction_angle = 23
+    global cohesion = 0.14e6 * 1e-3 ; in kg mm^-1 s^-2
+    global cohesion_res = 0
+            
+    ; parameters of potential crack surfaces (b-bricks)
+    global s_factor = 7
+    global E_b = E*s_factor ; strong brick and weak bond
+    global G_b = E_b / 3
+    global K_n_b = E_b / joint_spacing ; same joint spacing is used
+    global K_s_b = G_b / joint_spacing
+    global t_strength_b = 2.74e6 * 1e-3 ; in kg mm^-1 s^-2, or kPa
+    global c_strength_b = 5.93e6 * 1e-3 ; in kg mm^-1 s^-2, or kPa
+    global friction_angle_b = 45
+    global cohesion_b = 2*2.74e6 * 1e-3 ;1 or 2 times ft(tensile strength of bricks), in N/mm^2
+    global cohesion_res_b = 0
+        
+    ; emprical relationships - e-3 to get the units consistant - SI units
+    ; bond
+    global G_t = t_strength*0.029e-3 * 1e3 ; energy release rate in kg s^-1
+    global G_s = G_t*10
+    global G_c = c_strength*1.6e-3 * 1e3
+    ; potential crack surfaces - bricks
+    global G_t_b = t_strength_b * 0.029e-3 * 1e3
+    global G_s_b = G_t_b * 10
+    global G_c_b = c_strength_b * 1.6e-3 * 1e3
+        
+    ; loading params
+    global cycle_n = 101
+    global velocity = 0.01 * 1e3
+    global loading_group = 'TOP'
+    global amp = 5.39e-3 * 1e3
+    global v_pressure = -0.5e6 * 1e-3 ; in kg mm^-1 s^-2, or MPa
+    ;global loading_amp_list = list.seq(0.09, 0.09,0.09, 0.09,0.09, 0.09, 0.18, 0.18, 0.18, 0.18, 0.18, 0.18, 0.27, 0.27, 0.27, 0.27, 0.27, 0.27, 0.36, 0.35, 0.36, 0.35, 0.36, 0.35, 0.51, 0.49, 0.51, 0.49, 0.51, 0.49, 1.03, 1.03, 1.03, 1.03, 1.03, 1.03, 1.57, 1.57, 1.57, 1.57, 1.57, 1.57, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66, 5.39, 5.35, 5.39, 5.35, 5.39, 5.35)
+                    
+end
+[params]
