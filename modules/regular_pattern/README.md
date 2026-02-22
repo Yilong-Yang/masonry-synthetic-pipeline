@@ -1,42 +1,62 @@
-﻿# Module: Regular Pattern
+﻿# Public Release: Regular Pattern Module
 
-This module generates a 2D masonry mesh (bricks and mortar) from block geometry
-input and writes a Gmsh `.msh` file. Random seed generation is enabled to control mesh sizes and structureness of the mesh.
+This module is a self-contained, publication-ready package with:
 
-## Files
+- mesh generation from block geometry (`RegularPattern.py`)
+- 3DEC command export from generated mesh (`ThreeDecCommand.py`)
 
-- `RegularPattern.py`: main entry point.
-- `functions.py`: geometry parsing and random seed-point generation.
-- `gmsh_functions.py`: Gmsh geometry and mesh helper functions.
-- `const.py`: color constants for visualization.
-- `data/Wallet_example.txt`: example input file.
-- `data/Wallet_example.msh`: example output mesh.
+## Contents
 
-## Dependencies
+- `RegularPattern.py`: generates a 2D masonry mesh (bricks + mortar).
+- `ThreeDecCommand.py`: converts `.msh` into 3DEC prism and loading-block commands.
+- `functions.py`: geometry parsing and seed-point generation helpers.
+- `gmsh_functions.py`: Gmsh geometry/mesh utility functions.
+- `const.py`: shared plotting colors.
+- `data/Wallet_example.txt`: example geometry input.
+- `data/Wallet_example.msh`: example mesh input/output.
 
-Install from this module directory:
+## Requirements
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
+## Run
 
-From repository root:
+From this folder, generate mesh:
 
 ```bash
-cd modules/regular_pattern
 python RegularPattern.py
 ```
 
-Typical non-GUI run:
+Common mesh options:
 
 ```bash
 python RegularPattern.py --no-gui --mesh-size 0.004 --seed-count 40 --random-seed 42
 ```
 
-Skip writing output:
+To skip writing output:
 
 ```bash
 python RegularPattern.py --no-write
+```
+
+Export to 3DEC commands:
+
+```bash
+python ThreeDecCommand.py
+```
+
+Common 3DEC export options:
+
+```bash
+python ThreeDecCommand.py --input data/Wallet_example.msh --output data/threedec/Wallet_example.dat --extrusion 0.065 --scale 1000
+```
+
+If the mesh does not contain a dedicated mortar cell block:
+
+```bash
+python ThreeDecCommand.py --no-mortar
 ```
