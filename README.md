@@ -5,7 +5,7 @@ Each module has its own code, data, and dependencies.
 
 ## Modules
 
-- `modules/regular_pattern`: 2D masonry mesh generation (bricks + mortar) from block geometry input.
+- `modules/3DEC_modules`: 2D masonry mesh generation (bricks + mortar) from block geometry input.
 - `modules/three_dec_generators`: 3DEC input script generation (`params.dat`, `block_creation.dat`, and `test.dat` workflow).
 
 ## Module Convention
@@ -22,7 +22,7 @@ Each module should be self-contained and include:
 Regular pattern module:
 
 ```bash
-cd modules/regular_pattern
+cd modules/3DEC_modules
 pip install -r requirements.txt
 python RegularPattern.py --no-gui
 ```
@@ -35,3 +35,4 @@ pip install -r requirements.txt
 python BlockCreationGen.py --geometry-input data/geometry_input.dat --output block_creation.dat --force
 python ParamsGen.py --interactive --output params.dat --force
 ```
+

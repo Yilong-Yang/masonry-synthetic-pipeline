@@ -1,4 +1,4 @@
-﻿# Public Release: Regular Pattern Module
+﻿# Module: 3DEC_modules
 
 This module is a self-contained, publication-ready package with:
 
@@ -60,3 +60,4 @@ If the mesh does not contain a dedicated mortar cell block:
 ```bash
 python ThreeDecCommand.py --no-mortar
 ```
+
