@@ -1,40 +1,25 @@
-# Public Release: RegularPattern
+﻿# Masonry Synthetic Pipeline
 
-This folder is a self-contained, publication-ready version of the original
-`RegularPattern.py` workflow. Original project scripts remain unchanged.
+This repository is organized as a collection of independent modules.
+Each module has its own code, data, and dependencies.
 
-## Contents
+## Modules
 
-- `RegularPattern.py`: main entry point.
-- `functions.py`: geometry parsing and seed-point generation helpers.
-- `gmsh_functions.py`: Gmsh geometry/mesh utility functions.
-- `const.py`: shared plotting colors.
-- `data/Wallet_example.txt`: example input data file.
+- `modules/regular_pattern`: 2D masonry mesh generation (bricks + mortar) from block geometry input.
 
-## Requirements
+## Module Convention
 
-Install dependencies:
+Each module should be self-contained and include:
+
+- implementation code
+- module-specific `README.md`
+- `requirements.txt`
+- any required example data
+
+## Current Module Usage
 
 ```bash
+cd modules/regular_pattern
 pip install -r requirements.txt
-```
-
-## Run
-
-From this folder:
-
-```bash
-python RegularPattern.py
-```
-
-Common options:
-
-```bash
-python RegularPattern.py --no-gui --mesh-size 0.004 --seed-count 40 --random-seed 42
-```
-
-To skip writing output:
-
-```bash
-python RegularPattern.py --no-write
+python RegularPattern.py --no-gui
 ```
