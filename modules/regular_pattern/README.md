@@ -1,7 +1,7 @@
 ﻿# Module: Regular Pattern
 
 This module generates a 2D masonry mesh (bricks and mortar) from block geometry
-input and writes a Gmsh `.msh` file.
+input and writes a Gmsh `.msh` file. Random seed generation is enabled to control mesh sizes and structureness of the mesh.
 
 ## Files
 
