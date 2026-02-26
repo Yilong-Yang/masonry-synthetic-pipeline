@@ -38,7 +38,7 @@ def _build_world_matrix(raw_matrix: np.ndarray, transpose: bool) -> mathutils.Ma
         matrix = matrix.T
 
     world_matrix = mathutils.Matrix(matrix.tolist())
-    if world_matrix.size != 4:
+    if len(world_matrix) != 4 or len(world_matrix[0]) != 4:
         raise ValueError("Failed to build a valid 4x4 Blender matrix.")
     return world_matrix
 
