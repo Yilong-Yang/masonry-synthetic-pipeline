@@ -1,5 +1,7 @@
 # Masonry Synthetic Pipeline
 
+Updates 09/06/2026: We are preparing the newly updated and additional code and data for the revised manuscript.
+
 This repository contains the implementation of the automated pipeline proposed in **_An Automated Pipeline for Synthetic Data Generation to Evaluate Segmentation and Deformation Monitoring Algorithms for Masonry Structures_**.
 
 This repository is organized as a collection of independent modules.
